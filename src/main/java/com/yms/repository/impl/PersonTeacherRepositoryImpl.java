@@ -14,7 +14,7 @@ public class PersonTeacherRepositoryImpl implements PersonRepository {
         File file = new File("/home/yms/Documents/java/JCDDB/teachers.txt");
         if(!file.exists()) {
             System.out.println("File of Teachers.txt not exists!");
-            System.exit(0);
+            return null;
         }
         ArrayList<Person> ar = new ArrayList<Person>();
         try {

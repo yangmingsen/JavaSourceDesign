@@ -16,6 +16,8 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.*;
+import java.nio.channels.FileChannel;
 
 public class TeleIndexFrame extends JFrame  implements ListSelectionListener {
     private JPanel p;
@@ -165,7 +167,18 @@ public class TeleIndexFrame extends JFrame  implements ListSelectionListener {
             }
         });
         JButton btn6 = new JButton("恢复");
+        btn6.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                recoverContacts();
+                TeleMemo.getInstance().initTeleData();
+            }
+        });
         JButton btn7 = new JButton("备份");
+        btn7.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                backupContacts();
+            }
+        });
         JButton btn8 = new JButton("保存");
         east.add(lblEast);
         east.add(btn4);
@@ -411,9 +424,94 @@ public class TeleIndexFrame extends JFrame  implements ListSelectionListener {
         }
     }
 
+    private  void backupContacts() {
+        JFileChooser jf=new JFileChooser();
+        jf.setFileSelectionMode(JFileChooser.SAVE_DIALOG | JFileChooser.DIRECTORIES_ONLY);
+        jf.setCurrentDirectory(new File("/home/yms/Documents/java"));//设置默认路径
+        jf.setDialogTitle("选择需要复制的文件夹");
+        if(jf.showOpenDialog(this)==JFileChooser.APPROVE_OPTION)
+        {
+            File fi = jf.getSelectedFile();
+            String beginDrc = fi.getPath();
+
+            jf.setDialogTitle("选择要备份到的路径");
+            if(jf.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+                String endDrc = jf.getSelectedFile().getPath();
+                endDrc = endDrc.substring(0,endDrc.lastIndexOf('/'))+"/JCDDBemo";
+                try {
+                    copy(beginDrc,endDrc);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private  void recoverContacts() {
+        JFileChooser jf=new JFileChooser();
+        jf.setFileSelectionMode(JFileChooser.SAVE_DIALOG | JFileChooser.DIRECTORIES_ONLY);
+        jf.setCurrentDirectory(new File("/home/yms/Documents/java"));//设置默认路径
+        jf.setDialogTitle("选择您以前备份的数据文件夹");
+        if(jf.showOpenDialog(this)==JFileChooser.APPROVE_OPTION)
+        {
+            File fi = jf.getSelectedFile();
+            String beginDrc = fi.getPath();
+            String endDrc = "/home/yms/Documents/java/JCDDB";
+
+                try {
+                    copy(beginDrc,endDrc);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+        }
+    }
+
+
+    public static void copy(String src, String des) throws Exception {
+        //初始化文件复制
+        File file1=new File(src);
+        //把文件里面内容放进数组
+        File[] fs=file1.listFiles();
+        //初始化文件粘贴
+        File file2=new File(des);
+        //判断是否有这个文件有不管没有创建
+        if(!file2.exists()){
+            file2.mkdirs();
+        }
+        //遍历文件及文件夹
+        for (File f : fs) {
+            if(f.isFile()){
+                //文件
+                fileCopy(f.getPath(),des+"/"+f.getName()); //调用文件拷贝的方法
+            }else if(f.isDirectory()){
+                //文件夹
+                copy(f.getPath(),des+"/"+f.getName());//继续调用复制方法      递归的地方,自己调用自己的方法,就可以复制文件夹的文件夹了
+            }
+        }
+
+    }
+
+    /**
+     * 文件复制的具体方法
+     */
+    private static void fileCopy(String src, String des) throws Exception {
+        //io流固定格式
+        BufferedInputStream bis = new BufferedInputStream(new FileInputStream(src));
+        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(des));
+        int i = -1;//记录获取长度
+        byte[] bt = new byte[2014];//缓冲区
+        while ((i = bis.read(bt))!=-1) {
+            bos.write(bt, 0, i);
+        }
+        bis.close();
+        bos.close();
+        //关闭流
+    }
+
+
 
     public static void main(String[] args) {
-
-        TeleIndexFrame.addPersonView(1);
+        new TeleIndexFrame();
     }
 }

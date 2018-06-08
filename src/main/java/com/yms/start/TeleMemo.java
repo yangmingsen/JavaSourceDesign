@@ -19,16 +19,29 @@ public class TeleMemo {
     private static final TeleMemo singleTele = new TeleMemo();
 
     private TeleMemo() {
+        this.initTeleData();
+    }
+
+    public void initTeleData() {
         //实例化
         this.perList = new ArrayList<Person>();
-        //读取数据
-        this.perList.addAll(ServiceFactory.getTeacherService().readPerson());
-        this.perList.addAll(ServiceFactory.getFriendService().readPerson());
-        this.perList.addAll(ServiceFactory.getKinsfolkService().readPerson());
+
+        if(ServiceFactory.getTeacherService().readPerson() != null) {
+            this.perList.addAll(ServiceFactory.getTeacherService().readPerson());
+        }
+        if(ServiceFactory.getKinsfolkService().readPerson() != null) {
+            this.perList.addAll(ServiceFactory.getKinsfolkService().readPerson());
+        }
+        if(ServiceFactory.getFriendService().readPerson() != null) {
+            this.perList.addAll(ServiceFactory.getFriendService().readPerson());
+        }
+
+        for (Person per: this.perList) {
+            System.out.println(per.toString());
+        }
 
         //按电话号码从小到大排序
         Collections.sort(this.perList,new SortPersonByPhone());
-
     }
 
     public ArrayList<Person> getPerList() {

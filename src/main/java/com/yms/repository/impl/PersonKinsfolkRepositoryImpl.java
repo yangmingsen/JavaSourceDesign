@@ -14,7 +14,7 @@ public class PersonKinsfolkRepositoryImpl implements PersonRepository {
         File file = new File("/home/yms/Documents/java/JCDDB/kinsfolks.txt");
         if(!file.exists()) {
             System.out.println("File of kinsfolk.txt not exists!");
-            System.exit(0);
+            return null;
         }
         ArrayList<Person> ar = new ArrayList<Person>();
         try {
