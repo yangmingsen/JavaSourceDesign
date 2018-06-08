@@ -1,9 +1,7 @@
 package com.yms.start;
 
 import com.yms.domain.Person;
-import com.yms.gui.MainFrame;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class GUI {
@@ -30,10 +28,6 @@ public class GUI {
 
     public static void searchRes() {
 
-    }
-
-    public static void main(String[] args) {
-        new MainFrame();
     }
 
 

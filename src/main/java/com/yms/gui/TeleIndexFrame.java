@@ -17,10 +17,14 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
-import java.nio.channels.FileChannel;
+import java.sql.*;
 
+
+/**
+ * 主界面采用边界式布局
+ */
 public class TeleIndexFrame extends JFrame  implements ListSelectionListener {
-    private JPanel p;
+    private JPanel p;//主面板
 
     private JPanel north;
     private JPanel west;
@@ -44,8 +48,10 @@ public class TeleIndexFrame extends JFrame  implements ListSelectionListener {
 
     JButton btnSearch;
 
-
-
+    private static final String DBDRIVER = "com.mysql.jdbc.Driver";
+    private static final String DBURL = "jdbc:mysql://127.0.0.1:3306/DbTest";
+    private static final String USER = "root";
+    private static final String PASSWORD ="123456";
 
 
     public void valueChanged(ListSelectionEvent e) {
@@ -71,8 +77,8 @@ public class TeleIndexFrame extends JFrame  implements ListSelectionListener {
     }
 
 
-    public TeleIndexFrame() {
-        super("欢迎来到TeleMemo!");
+    public void indexView() {
+        this.setTitle("Hi 欢迎来到!");
         p = new JPanel(new BorderLayout(0,0));
 
 
@@ -94,8 +100,7 @@ public class TeleIndexFrame extends JFrame  implements ListSelectionListener {
         JButton btn1 = new JButton("家人");
         btn1.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-               tableModel.setDataVector(VectorForPersonFactory.getKinsfolkData(), ServiceNameHelper.getKinsfolkName());
-                System.out.println(tableModel.getDataVector().toString());
+                tableModel.setDataVector(VectorForPersonFactory.getKinsfolkData(), ServiceNameHelper.getKinsfolkName());
             }
         });
         JButton btn2 = new JButton("朋友");
@@ -199,7 +204,7 @@ public class TeleIndexFrame extends JFrame  implements ListSelectionListener {
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         selectionMode = table.getSelectionModel();// 取得table的ListSelectionModel.
         selectionMode.addListSelectionListener(this);
-       // center.add(table);
+        // center.add(table);
         jscenter = new JScrollPane(table);
 
         //分别加入到边界布局中
@@ -221,7 +226,103 @@ public class TeleIndexFrame extends JFrame  implements ListSelectionListener {
         tableModel.setDataVector(VectorForPersonFactory.getTeacherData(), ServiceNameHelper.getTeacherName());
     }
 
+    private boolean checkUser(String usr, String pad) {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
 
+        try {
+            Class.forName(DBDRIVER);
+
+            conn = DriverManager.getConnection(DBURL,USER,PASSWORD);
+            String sql = "select * from JavaDesign where username=? and password=?";
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1,usr);
+            pstmt.setString(2,pad);
+            rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                return true;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public void login() {
+
+        int txtFieldLength = 16;
+        int hgap = 5;
+        int vgap = 5;
+        final Frame frame1 = new JFrame();
+        JPanel p1 = new JPanel(new FlowLayout(FlowLayout.CENTER,5,5));
+
+        JPanel p10 = new JPanel(new FlowLayout(FlowLayout.CENTER,hgap ,vgap));
+        JLabel lblTitle = new JLabel("Welcome to TeleMemo ");
+        lblTitle.setFont(new Font("Ubuntu",Font.BOLD,25));
+        p10.add(lblTitle);
+        p1.add(p10);
+
+        JPanel p11 = new JPanel(new FlowLayout(FlowLayout.CENTER,hgap ,vgap));
+        JLabel lbladd1 = new JLabel("用户名 : ");
+        final JTextField txtadd1 = new JTextField(txtFieldLength);
+        txtadd1.setName("");
+        p11.add(lbladd1);
+        p11.add(txtadd1);
+        p1.add(p11);
+
+        JPanel p12 = new JPanel(new FlowLayout(FlowLayout.CENTER,hgap ,vgap));
+        JLabel lbladd2 = new JLabel("密码 : ");
+        final JPasswordField txtadd2 = new JPasswordField(txtFieldLength);
+        txtadd2.setName("");
+        p12.add(lbladd2);
+        p12.add(txtadd2);
+        p1.add(p12);
+
+        JPanel p13 = new JPanel(new FlowLayout(FlowLayout.CENTER,45 ,15));
+        JButton btn1 = new JButton("登录");
+        btn1.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String usr = txtadd1.getText();
+                String pad = new String(txtadd2.getPassword());
+                    if( checkUser(usr,pad) ) {
+                        JOptionPane.showMessageDialog(null,"登录成功!","通知",JOptionPane.INFORMATION_MESSAGE);
+                        frame1.setVisible(false);
+                        indexView();
+                    } else {
+                        JOptionPane.showMessageDialog(null,"登录失败!","通知",JOptionPane.ERROR_MESSAGE);
+                    }
+            }
+        });
+        JButton btn2 = new JButton("注册");
+        p13.add(btn1);
+        p13.add(btn2);
+        p1.add(p13);
+
+        frame1.add(p1);
+
+        frame1.setTitle("添加");
+        frame1.setSize(300,300);
+        frame1.setLocationRelativeTo(null);
+        frame1.setResizable(false);
+        frame1.setVisible(true);
+        ((JFrame) frame1).setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+    }
+
+    public TeleIndexFrame() {
+        login();
+    }
+
+    public static void main(String[] args) {
+        new TeleIndexFrame();
+    }
+
+    //增加联系人界面
     private static void addPersonView(final int match) {
         int txtFieldLength = 16;
         int hgap = 5;
@@ -369,7 +470,7 @@ public class TeleIndexFrame extends JFrame  implements ListSelectionListener {
                                         txtadd7.getText()));
                     }break;
                 }
-
+                JOptionPane.showMessageDialog(null,"添加联系人成功!","通知",JOptionPane.INFORMATION_MESSAGE);
                 frame2.setVisible(false);
 
             }
@@ -396,6 +497,7 @@ public class TeleIndexFrame extends JFrame  implements ListSelectionListener {
 
     }
 
+    //添加一个联系人处理方法
     private void delPerson() {
         int index[] = table.getSelectedRows();
         if ( index.length == 0 ) {
@@ -424,6 +526,9 @@ public class TeleIndexFrame extends JFrame  implements ListSelectionListener {
         }
     }
 
+    /**
+     * 备份文件
+     */
     private  void backupContacts() {
         JFileChooser jf=new JFileChooser();
         jf.setFileSelectionMode(JFileChooser.SAVE_DIALOG | JFileChooser.DIRECTORIES_ONLY);
@@ -443,10 +548,12 @@ public class TeleIndexFrame extends JFrame  implements ListSelectionListener {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                JOptionPane.showMessageDialog(this,"备份成功!","通知",JOptionPane.INFORMATION_MESSAGE);
             }
         }
     }
 
+    //恢复文件
     private  void recoverContacts() {
         JFileChooser jf=new JFileChooser();
         jf.setFileSelectionMode(JFileChooser.SAVE_DIALOG | JFileChooser.DIRECTORIES_ONLY);
@@ -464,10 +571,17 @@ public class TeleIndexFrame extends JFrame  implements ListSelectionListener {
                     e.printStackTrace();
                 }
 
+            JOptionPane.showMessageDialog(this,"恢复成功!","通知",JOptionPane.INFORMATION_MESSAGE);
+
         }
     }
 
-
+    /**复制文件夹入口
+     *
+     * @param src 源地址
+     * @param des 目标地址
+     * @throws Exception
+     */
     public static void copy(String src, String des) throws Exception {
         //初始化文件复制
         File file1=new File(src);
@@ -510,8 +624,4 @@ public class TeleIndexFrame extends JFrame  implements ListSelectionListener {
     }
 
 
-
-    public static void main(String[] args) {
-        new TeleIndexFrame();
-    }
 }
