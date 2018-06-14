@@ -7,6 +7,10 @@ import com.yms.repository.PersonRepository;
 import java.io.*;
 import java.util.ArrayList;
 
+/**
+ * 朋友类数据仓库
+ * created by yangmingsen on 2018/06/10
+ */
 public class PersonFriendRepositoryImpl implements PersonRepository {
     public ArrayList<Person> readPerson() {
 
