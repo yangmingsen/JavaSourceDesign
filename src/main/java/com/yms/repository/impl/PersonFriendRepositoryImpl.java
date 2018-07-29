@@ -14,7 +14,7 @@ import java.util.ArrayList;
 public class PersonFriendRepositoryImpl implements PersonRepository {
     public ArrayList<Person> readPerson() {
 
-        File file = new File("/home/yms/Documents/java/JCDDB/friends.txt");
+        File file = new File("E:\\JavaProject\\JCDDB\\friends.txt");
         if(!file.exists()) {
             System.out.println("File of friends.txt not exists!");
             return null;
@@ -42,7 +42,7 @@ public class PersonFriendRepositoryImpl implements PersonRepository {
     }
 
     public void writePersion(ArrayList<Person> pers) {
-        File file = new File("/home/yms/Documents/java/JCDDB/friends.txt");
+        File file = new File("E:\\JavaProject\\JCDDB\\friends.txt");
         if(!file.exists()) {
             try {
                 file.createNewFile();

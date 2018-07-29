@@ -7,11 +7,15 @@ import com.yms.repository.PersonRepository;
 import java.io.*;
 import java.util.ArrayList;
 
+/**
+ * 亲人类数据仓库
+ * created by yangmingsen on 2018/06/10
+ */
 public class PersonKinsfolkRepositoryImpl implements PersonRepository {
 
     public ArrayList<Person> readPerson() {
 
-        File file = new File("/home/yms/Documents/java/JCDDB/kinsfolks.txt");
+        File file = new File("E:\\JavaProject\\JCDDB\\kinsfolks.txt");
         if(!file.exists()) {
             System.out.println("File of kinsfolk.txt not exists!");
             return null;
@@ -39,7 +43,7 @@ public class PersonKinsfolkRepositoryImpl implements PersonRepository {
     }
 
     public void writePersion(ArrayList<Person> pers) {
-        File file = new File("/home/yms/Documents/java/JCDDB/kinsfolks.txt");
+        File file = new File("E:\\JavaProject\\JCDDB\\kinsfolks.txt");
         if(!file.exists()) {
             try {
                 file.createNewFile();

@@ -8,10 +8,14 @@ import com.yms.repository.PersonRepository;
 import java.io.*;
 import java.util.ArrayList;
 
+/**
+ * 老师类数据仓库
+ * created by yangmingsen on 2018/06/10
+ */
 public class PersonTeacherRepositoryImpl implements PersonRepository {
     public ArrayList<Person> readPerson() {
 
-        File file = new File("/home/yms/Documents/java/JCDDB/teachers.txt");
+        File file = new File("E:\\JavaProject\\JCDDB\\teachers.txt");
         if(!file.exists()) {
             System.out.println("File of Teachers.txt not exists!");
             return null;
@@ -39,7 +43,7 @@ public class PersonTeacherRepositoryImpl implements PersonRepository {
     }
 
     public void writePersion(ArrayList<Person> pers) {
-        File file = new File("/home/yms/Documents/java/JCDDB/teachers.txt");
+        File file = new File("E:\\JavaProject\\JCDDB\\teachers.txt");
 
         if(!file.exists()) {
             try {

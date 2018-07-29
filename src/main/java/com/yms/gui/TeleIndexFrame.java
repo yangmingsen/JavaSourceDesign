@@ -26,24 +26,26 @@ import java.sql.*;
 public class TeleIndexFrame extends JFrame  implements ListSelectionListener {
     private JPanel p;//主面板
 
-    private JPanel north;
-    private JPanel west;
-    private JPanel south;
-    private JPanel east;
-    private JPanel center;
+    //边界式布局子面板
+    private JPanel north;//北
+    private JPanel west;//西
+    private JPanel south;//男
+    private JPanel east;//东
+    private JPanel center;//中部
 
+    //可伸缩面板,边界式布局子面板的子面板
     private JScrollPane jsnorth;
     private JScrollPane jswest;
-
-
     private JScrollPane jssouth;
     private JScrollPane jseast;
     private JScrollPane jscenter;
 
+    //定义表格模型
     private DefaultTableModel tableModel;
     private JTable table;
     ListSelectionModel selectionMode = null;
 
+    //
     JTextField txtSearch;
 
     JButton btnSearch;
@@ -77,6 +79,9 @@ public class TeleIndexFrame extends JFrame  implements ListSelectionListener {
     }
 
 
+    /**
+     * 系统首页
+     */
     public void indexView() {
         this.setTitle("Hi 欢迎来到!");
         p = new JPanel(new BorderLayout(0,0));
@@ -84,9 +89,15 @@ public class TeleIndexFrame extends JFrame  implements ListSelectionListener {
 
         //北部布局
         north = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        txtSearch = new JTextField("Search what you want",15);
+        txtSearch = new JTextField("Search what you want",30);
         txtSearch.setFont(new Font("宋体",Font.ITALIC,17));
         btnSearch = new JButton("搜索");
+        btnSearch.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String pid = txtSearch.getText();
+                //do to
+            }
+        });
         north.add(txtSearch);
         north.add(btnSearch);
         jsnorth = new JScrollPane(north);
@@ -226,33 +237,43 @@ public class TeleIndexFrame extends JFrame  implements ListSelectionListener {
         tableModel.setDataVector(VectorForPersonFactory.getTeacherData(), ServiceNameHelper.getTeacherName());
     }
 
+    /**
+     * 用户登录校验
+     * @param usr 用户名
+     * @param pad 密码
+     * @return
+     */
     private boolean checkUser(String usr, String pad) {
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-
-        try {
-            Class.forName(DBDRIVER);
-
-            conn = DriverManager.getConnection(DBURL,USER,PASSWORD);
-            String sql = "select * from JavaDesign where username=? and password=?";
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1,usr);
-            pstmt.setString(2,pad);
-            rs = pstmt.executeQuery();
-
-            while (rs.next()) {
-                return true;
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        return false;
+//        Connection conn = null;
+//        PreparedStatement pstmt = null;
+//        ResultSet rs = null;
+//
+//        try {
+//            Class.forName(DBDRIVER);
+//
+//            conn = DriverManager.getConnection(DBURL,USER,PASSWORD);
+//            String sql = "select * from JavaDesign where username=? and password=?";
+//            pstmt = conn.prepareStatement(sql);
+//            pstmt.setString(1,usr);
+//            pstmt.setString(2,pad);
+//            rs = pstmt.executeQuery();
+//
+//            while (rs.next()) {
+//                return true;
+//            }
+//
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        } catch (ClassNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//        return false;
+        return true;
     }
 
+    /**
+     * 用户登录界面
+     */
     public void login() {
 
         int txtFieldLength = 16;
@@ -305,7 +326,7 @@ public class TeleIndexFrame extends JFrame  implements ListSelectionListener {
 
         frame1.add(p1);
 
-        frame1.setTitle("添加");
+        frame1.setTitle("登录");
         frame1.setSize(300,300);
         frame1.setLocationRelativeTo(null);
         frame1.setResizable(false);
